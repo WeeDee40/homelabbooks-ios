@@ -91,3 +91,7 @@ sw.*
 
 /resources/
 /android/app/release/
+# HomeLabBooks
+.build-dd/
+homelab/asc.env
+homelab/build/

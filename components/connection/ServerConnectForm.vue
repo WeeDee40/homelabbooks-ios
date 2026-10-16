@@ -92,6 +92,7 @@
 </template>
 
 <script>
+import { HOMELAB_SERVER } from '~/homelab/einstellungen' // HomeLabBooks
 import { Browser } from '@capacitor/browser'
 import { CapacitorHttp } from '@capacitor/core'
 import { Dialog } from '@capacitor/dialog'
@@ -106,7 +107,7 @@ export default {
       showAuth: false,
       processing: false,
       serverConfig: {
-        address: null,
+        address: HOMELAB_SERVER, // HomeLabBooks
         version: null,
         username: null,
         customHeaders: null
@@ -441,7 +442,7 @@ export default {
       this.showAuth = false
       this.error = null
       this.serverConfig = {
-        address: null,
+        address: HOMELAB_SERVER, // HomeLabBooks
         userId: null,
         username: null
       }
