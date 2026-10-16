@@ -1,6 +1,6 @@
 {
-	"appId": "com.audiobookshelf.app",
-	"appName": "audiobookshelf-app",
+	"appId": "ch.gerber.homelabbooks",
+	"appName": "HomeLabBooks",
 	"webDir": "dist",
 	"plugins": {
 		"CapacitorHttp": {
