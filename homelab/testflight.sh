@@ -20,18 +20,20 @@ alt=$(grep -m1 -o 'CURRENT_PROJECT_VERSION = [0-9]*' "$P" | grep -o '[0-9]*$')
 neu=$((alt + 1))
 sed -i '' "s/CURRENT_PROJECT_VERSION = $alt;/CURRENT_PROJECT_VERSION = $neu;/g" "$P"
 echo "Build $neu"
+zurueck() { sed -i '' "s/CURRENT_PROJECT_VERSION = $neu;/CURRENT_PROJECT_VERSION = $alt;/g" "$P"; }   # nur die Build-Nummer, nie die ganze Datei
+trap '[ "${fertig:-}" = 1 ] || zurueck' EXIT
 rm -rf .build-dd/HomeLabBooks.xcarchive .build-dd/export
 xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination "generic/platform=iOS" \
   -archivePath .build-dd/HomeLabBooks.xcarchive -derivedDataPath .build-dd \
   -allowProvisioningUpdates "${AUTH[@]}" -quiet archive
-if [ "${1:-}" = "--nur-archiv" ]; then git checkout -- "$P"; echo "Archiv fertig (ohne Upload)"; exit 0; fi
+if [ "${1:-}" = "--nur-archiv" ]; then echo "Archiv fertig (ohne Upload)"; exit 0; fi
 log=$(mktemp)
 if ! xcodebuild -exportArchive -archivePath .build-dd/HomeLabBooks.xcarchive \
   -exportOptionsPlist homelab/ExportOptions.plist -exportPath .build-dd/export -allowProvisioningUpdates "${AUTH[@]}" >"$log" 2>&1 \
   || ! grep -q "Upload succeeded" "$log"; then
   grep -iE "error|fail" "$log" | head -5
-  git checkout -- "$P"                                    # Build-Nummer zurück, nichts committen
   echo "UPLOAD FEHLGESCHLAGEN (Build $neu). Prüfen: homelab/asc.env, App in App Store Connect angelegt?"
   exit 1
 fi
+fertig=1
 git commit -q -m "TestFlight: Build $neu" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" "$P" && echo "Build $neu hochgeladen und committet"
