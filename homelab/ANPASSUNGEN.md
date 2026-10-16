@@ -8,7 +8,7 @@ neuen Tag in `homelabbooks` mergen, Konflikte nur in den Dateien unten).
 | Datei | Änderung |
 |---|---|
 | `capacitor.config.json` | `appId` `ch.gerber.homelabbooks`, `appName` `HomeLabBooks` |
-| `ios/App/App/Info.plist` | `CFBundleDisplayName` = HomeLabBooks |
+| `ios/App/App/Info.plist` | `CFBundleDisplayName` = HomeLabBooks, `ITSAppUsesNonExemptEncryption` = false (keine Verschlüsselungsfrage pro Build) |
 | `ios/App/App.xcodeproj/project.pbxproj` | Bundle-ID `ch.gerber.homelabbooks` (Debug und Release), Team `C4LESUKP6H`, Version 1.0, eigene Build-Nummer, Mindest-iOS 15 (Xcode 27 kann kein iOS 14 mehr) |
 | `ios/App/Podfile` (+ `Podfile.lock`) | `platform :ios, '15.0'` und im `post_install` alle Pods auf iOS 15 |
 | `ios/App/App/Assets.xcassets/Icons.appiconset/*.png` | App-Symbol «HLB» (aus `homelab/icon_zeichnen.swift`) |
