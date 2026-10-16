@@ -5,7 +5,7 @@ import RealmSwift
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    lazy var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
+    var window: UIWindow?   // HomeLabBooks: Fenster gehört seit dem Scene-Lebenszyklus der SceneDelegate
     var backgroundCompletionHandler: (() -> Void)?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -130,3 +130,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+
+
+// HomeLabBooks: iOS 27 beendet Apps ohne Scene-Lebenszyklus sofort beim Start
+// (_UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption). Das Fenster mit dem Storyboard «Main»
+// legt iOS über UISceneStoryboardFile in der Info.plist an; hier werden nur Links (Anmeldung über OpenID,
+// Universal Links) an Capacitor weitergereicht, wie vorher in der AppDelegate.
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    var window: UIWindow?
+
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        for kontext in connectionOptions.urlContexts {
+            _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, open: kontext.url, options: [:])
+        }
+        if let aktivitaet = connectionOptions.userActivities.first {
+            _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, continue: aktivitaet, restorationHandler: { _ in })
+        }
+    }
+
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        for kontext in URLContexts {
+            _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, open: kontext.url, options: [:])
+        }
+    }
+
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, continue: userActivity, restorationHandler: { _ in })
+    }
+}
