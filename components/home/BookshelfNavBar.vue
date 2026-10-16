@@ -79,6 +79,15 @@ export default {
             text: this.$strings.ButtonHome
           },
           {
+            // HomeLabBooks: Tab «Entdecken»
+            to: '/bookshelf/entdecken',
+            routeName: 'bookshelf-entdecken',
+            iconPack: 'material-symbols',
+            icon: 'explore',
+            iconClass: 'text-xl',
+            text: 'Entdecken'
+          },
+          {
             to: '/bookshelf/library',
             routeName: 'bookshelf-library',
             iconPack: 'abs-icons',
