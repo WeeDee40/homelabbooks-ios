@@ -5,6 +5,9 @@
         <span class="material-symbols text-fg-muted">search</span>
         <input v-model="q" type="search" enterkeyhint="search" class="flex-grow bg-transparent outline-none py-2.5 px-2 text-base" placeholder="Wunsch, z. B. «spannender Krimi für die Ferien»" @search="leer" />
       </div>
+      <div class="flex gap-2 mt-2">
+        <button v-for="o in sprachen" :key="o.wert" type="button" class="text-xs px-3 py-1 rounded-full border" :class="spracheWahl === o.wert ? 'bg-fg text-bg border-fg' : 'border-border text-fg-muted'" @click="spracheAendern(o.wert)">{{ o.text }}</button>
+      </div>
     </form>
     <div v-if="laedt" class="flex flex-col items-center justify-center py-16 text-fg-muted">
       <svg class="animate-spin mb-3" style="width: 28px; height: 28px" viewBox="0 0 24 24"><path fill="currentColor" d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" /></svg>
@@ -26,11 +29,12 @@
 
 <script>
 // HomeLabBooks: Tab «Entdecken» (Reihen und Suche aus /buecher/… des Musikwunsch-Dienstes)
-import { buecherApi } from '~/homelab/buecher-api'
+import { buecherApi, sprache, spracheSetzen } from '~/homelab/buecher-api'
 
 export default {
   data() {
-    return { q: '', reihen: [], laedt: false, fehler: '', auswahl: null, zeigeDetails: false }
+    return { q: '', reihen: [], laedt: false, fehler: '', auswahl: null, zeigeDetails: false, spracheWahl: sprache(),
+      sprachen: [{ wert: 'de', text: 'Nur Deutsch' }, { wert: 'alle', text: 'Deutsch + Englisch' }] }
   },
   mounted() {
     this.laden()
@@ -54,12 +58,17 @@ export default {
       this.laedt = true
       this.fehler = ''
       try {
-        const r = await buecherApi(this, 'GET', '/buecher/suche?q=' + encodeURIComponent(q))
+        const r = await buecherApi(this, 'GET', '/buecher/suche?q=' + encodeURIComponent(q) + '&sprache=' + this.spracheWahl)
         this.reihen = r.eintraege?.length ? [{ titel: r.titel, eintraege: r.eintraege }] : []
       } catch (e) {
         this.fehler = `Suche fehlgeschlagen: ${e.message}`
       }
       this.laedt = false
+    },
+    spracheAendern(wert) {
+      this.spracheWahl = wert
+      spracheSetzen(wert)
+      if (this.q.trim()) this.suchen()
     },
     leer() {
       if (!this.q) this.laden()

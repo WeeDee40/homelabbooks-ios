@@ -16,3 +16,18 @@ export function buecherApi(ctx, methode, pfad, daten) {
     headers: { 'X-ABS-Token': ctx.$store.getters['user/getToken'] || '' }
   })
 }
+
+// Sprache der Suche und der Wünsche: 'de' (nur Deutsch, Standard) oder 'alle' (Deutsch + Englisch), pro Gerät gemerkt
+export function sprache() {
+  try {
+    return localStorage.getItem('hlb-sprache') === 'alle' ? 'alle' : 'de'
+  } catch (e) {
+    return 'de'
+  }
+}
+
+export function spracheSetzen(wert) {
+  try {
+    localStorage.setItem('hlb-sprache', wert === 'alle' ? 'alle' : 'de')
+  } catch (e) {}
+}

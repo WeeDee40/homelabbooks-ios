@@ -32,7 +32,7 @@
 
 <script>
 // HomeLabBooks: Detailfenster im Tab «Entdecken» (Beschreibung, Wünschen als Hörbuch oder E-Book)
-import { buecherApi } from '~/homelab/buecher-api'
+import { buecherApi, sprache } from '~/homelab/buecher-api'
 
 export default {
   props: { value: Boolean, eintrag: Object },
@@ -62,7 +62,7 @@ export default {
     async wuenschen(art) {
       this.laeuft = art
       try {
-        const r = await buecherApi(this, 'POST', '/buecher/wunsch', { provider: this.eintrag.provider, book_id: this.eintrag.book_id, content_type: art })
+        const r = await buecherApi(this, 'POST', '/buecher/wunsch', { provider: this.eintrag.provider, book_id: this.eintrag.book_id, content_type: art, titel: this.eintrag.titel, sprache: sprache() })
         this.gewuenscht = true
         this.$emit('gewuenscht', this.eintrag)
         this.$toast.success(r.meldung || 'Gewünscht')
