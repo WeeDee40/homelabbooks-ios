@@ -146,6 +146,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let aktivitaet = connectionOptions.userActivities.first {
             _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, continue: aktivitaet, restorationHandler: { _ in })
         }
+        // Erst nach dem Anzeigen des Fensters (macht iOS nach dieser Methode), sonst liegt die Web-Ansicht darüber
+        DispatchQueue.main.async { HLSplash.zeigen(in: self.window) }
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -156,5 +158,41 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, continue: userActivity, restorationHandler: { _ in })
+    }
+}
+
+// HomeLabBooks: Startbild nach dem Systemstart stehen lassen, bis die Web-Ansicht geladen ist (mindestens
+// 0,8 s, höchstens 4 s), dann weich ausblenden – wie HLSplash bei HomeLabMusic und HomeLabOffice.
+// Ohne das sieht man das Startbild nur einen Sekundenbruchteil und danach die leere dunkle Web-Ansicht.
+@MainActor
+enum HLSplash {
+    static let mindestens: TimeInterval = 0.8
+    static let hoechstens: TimeInterval = 4
+    static let ausblenden: TimeInterval = 0.4
+
+    static func zeigen(in fenster: UIWindow?) {
+        guard let fenster, let bild = UIImage(named: "Splash") else { return }
+        let ansicht = UIImageView(image: bild)
+        ansicht.contentMode = .scaleAspectFill
+        ansicht.clipsToBounds = true
+        ansicht.frame = fenster.bounds
+        ansicht.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        fenster.addSubview(ansicht)
+        let start = Date()
+        func pruefen() {
+            let webView = (fenster.rootViewController as? CAPBridgeViewController)?.webView
+            let vergangen = Date().timeIntervalSince(start)
+            if vergangen < mindestens || ((webView?.isLoading ?? false) && vergangen < hoechstens) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { pruefen() }
+                return
+            }
+            UIView.animate(withDuration: ausblenden, delay: 0, options: [.curveEaseOut]) {
+                ansicht.alpha = 0
+                ansicht.transform = CGAffineTransform(scaleX: 1.04, y: 1.04)
+            } completion: { _ in
+                ansicht.removeFromSuperview()
+            }
+        }
+        pruefen()
     }
 }

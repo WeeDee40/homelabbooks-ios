@@ -9,7 +9,7 @@ neuen Tag in `homelabbooks` mergen, Konflikte nur in den Dateien unten).
 |---|---|
 | `capacitor.config.json` | `appId` `ch.gerber.homelabbooks`, `appName` `HomeLabBooks` |
 | `ios/App/App/Info.plist` | `CFBundleDisplayName` = HomeLabBooks, `ITSAppUsesNonExemptEncryption` = false (keine Verschlüsselungsfrage pro Build), `UIApplicationSceneManifest` mit `SceneDelegate` und Storyboard «Main» statt `UIMainStoryboardFile` |
-| `ios/App/App/AppDelegate.swift` | `window` ohne eigenes Fenster; neue Klasse `SceneDelegate` am Dateiende (reicht Links an Capacitor weiter). Nötig, weil iOS 27 Apps ohne Scene-Lebenszyklus beim Start beendet (Absturz von Build 1) |
+| `ios/App/App/AppDelegate.swift` | `window` ohne eigenes Fenster; neue Klasse `SceneDelegate` am Dateiende (reicht Links an Capacitor weiter). Nötig, weil iOS 27 Apps ohne Scene-Lebenszyklus beim Start beendet (Absturz von Build 1). Am Dateiende `HLSplash`: Startbild bleibt stehen, bis die Web-Ansicht geladen ist, und blendet weich aus |
 | `ios/App/App.xcodeproj/project.pbxproj` | Bundle-ID `ch.gerber.homelabbooks` (Debug und Release), Team `C4LESUKP6H`, Version 1.0, eigene Build-Nummer, Mindest-iOS 15 (Xcode 27 kann kein iOS 14 mehr) |
 | `ios/App/Podfile` (+ `Podfile.lock`) | `platform :ios, '15.0'` und im `post_install` alle Pods auf iOS 15 |
 | `ios/App/App/Assets.xcassets/Icons.appiconset/*.png` | App-Symbol «HLB» (aus `homelab/icon_zeichnen.swift`) |
