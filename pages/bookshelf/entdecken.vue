@@ -1,6 +1,10 @@
 <template>
   <div class="w-full h-full overflow-y-auto pb-24">
-    <form class="px-4 pt-4" @submit.prevent="suchen">
+    <!-- Für dich (persönliche Reihen) oder Stöbern (Kategorien) -->
+    <div class="flex mx-4 mt-3 p-0.5 rounded-lg bg-secondary text-sm">
+      <button v-for="m in modi" :key="m.wert" type="button" class="flex-1 py-1.5 rounded-md" :class="modus === m.wert ? 'bg-bg text-fg font-semibold shadow' : 'text-fg-muted'" @click="modusAendern(m.wert)">{{ m.text }}</button>
+    </div>
+    <form class="px-4 pt-3" @submit.prevent="suchen">
       <div class="flex items-center bg-secondary rounded-md px-3">
         <span class="material-symbols text-fg-muted">search</span>
         <input v-model="q" type="search" enterkeyhint="search" class="flex-grow bg-transparent outline-none py-2.5 px-2 text-base" placeholder="Wunsch, z. B. «spannender Krimi für die Ferien»" @search="leer" />
@@ -9,7 +13,8 @@
         <button v-for="o in sprachen" :key="o.wert" type="button" class="text-xs px-3 py-1 rounded-full border" :class="spracheWahl === o.wert ? 'bg-fg text-bg border-fg' : 'border-border text-fg-muted'" @click="spracheAendern(o.wert)">{{ o.text }}</button>
       </div>
     </form>
-    <div v-if="laedt" class="flex flex-col items-center justify-center py-16 text-fg-muted">
+    <homelab-buch-stoebern v-if="modus === 'stoebern' && !gesucht" :sprache="spracheWahl" @oeffnen="oeffnen" />
+    <div v-else-if="laedt" class="flex flex-col items-center justify-center py-16 text-fg-muted">
       <svg class="animate-spin mb-3" style="width: 28px; height: 28px" viewBox="0 0 24 24"><path fill="currentColor" d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" /></svg>
       <p class="text-sm">{{ q ? 'Suche läuft …' : 'Lädt deine Empfehlungen …' }}</p>
     </div>
@@ -31,13 +36,22 @@
 // HomeLabBooks: Tab «Entdecken» (Reihen und Suche aus /buecher/… des Musikwunsch-Dienstes)
 import { buecherApi, sprache, spracheSetzen } from '~/homelab/buecher-api'
 
+function gemerkterModus() {
+  try {
+    return localStorage.getItem('hlb-modus') === 'stoebern' ? 'stoebern' : 'fuerdich'
+  } catch (e) {
+    return 'fuerdich'
+  }
+}
+
 export default {
   data() {
-    return { q: '', reihen: [], laedt: false, fehler: '', auswahl: null, zeigeDetails: false, spracheWahl: sprache(),
+    return { q: '', gesucht: false, modus: gemerkterModus(), modi: [{ wert: 'fuerdich', text: 'Für dich' }, { wert: 'stoebern', text: 'Stöbern' }],
+      reihen: [], laedt: false, fehler: '', auswahl: null, zeigeDetails: false, spracheWahl: sprache(),
       sprachen: [{ wert: 'de', text: 'Nur Deutsch' }, { wert: 'alle', text: 'Deutsch + Englisch' }] }
   },
   mounted() {
-    this.laden()
+    if (this.modus === 'fuerdich') this.laden()
   },
   methods: {
     async laden() {
@@ -53,7 +67,8 @@ export default {
     },
     async suchen() {
       const q = this.q.trim()
-      if (!q) return this.laden()
+      if (!q) return this.leer()
+      this.gesucht = true
       document.activeElement?.blur()
       this.laedt = true
       this.fehler = ''
@@ -71,7 +86,18 @@ export default {
       if (this.q.trim()) this.suchen()
     },
     leer() {
-      if (!this.q) this.laden()
+      if (this.q) return
+      this.gesucht = false
+      if (this.modus === 'fuerdich') this.laden()
+    },
+    modusAendern(m) {
+      this.modus = m
+      try {
+        localStorage.setItem('hlb-modus', m)
+      } catch (e) {}
+      this.q = ''
+      this.gesucht = false
+      if (m === 'fuerdich') this.laden()
     },
     oeffnen(e) {
       this.auswahl = e
