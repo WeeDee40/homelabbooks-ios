@@ -103,7 +103,7 @@ export default {
       if (!e || e.provider === 'manual') return
       this.detailsLaden = true
       try {
-        const q = new URLSearchParams({ provider: e.provider, book_id: e.book_id, idn: e.idn || '', titel: e.titel || '', autor: e.autor || '' })
+        const q = new URLSearchParams({ provider: e.provider, book_id: e.book_id, idn: e.idn || '', titel: e.titel || '', autor: e.autor || '', sprache: sprache() })
         const d = await buecherApi(this, 'GET', '/buecher/details?' + q.toString())
         if (this.eintrag === e) this.details = d
       } catch (err) {
