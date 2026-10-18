@@ -57,7 +57,8 @@ export default {
     // Cover aus mehreren Quellen: DNB-Cover-Dienst, Open Library, Hardcover (aus den Details); fehlt eines, das nächste
     coverListe() {
       const e = this.eintrag || {}
-      return [...(e.covers || (e.cover ? [e.cover] : [])), this.details?.cover].filter(Boolean)
+      const bib = e.abs_id ? [this.$store.getters['globals/getLibraryItemCoverSrcById'](e.abs_id)] : [] // wie in der Bibliothek
+      return [...bib, ...(e.covers || (e.cover ? [e.cover] : [])), this.details?.cover].filter(Boolean)
     },
     coverUrl() {
       return coverUrl(this.$store, this.coverListe[this.coverIndex]) || null

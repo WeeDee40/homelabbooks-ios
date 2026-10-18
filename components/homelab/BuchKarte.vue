@@ -34,7 +34,9 @@ export default {
       return (this.eintrag.titel || '').split(/\s*[:–—]\s|\s-\s/)[0]
     },
     coverUrl() {
-      const liste = this.eintrag.covers || (this.eintrag.cover ? [this.eintrag.cover] : [])
+      // schon in der Bibliothek: dasselbe Cover wie in Audiobookshelf, sonst das Katalog-Cover
+      const bib = this.eintrag.abs_id ? [this.$store.getters['globals/getLibraryItemCoverSrcById'](this.eintrag.abs_id)] : []
+      const liste = [...bib, ...(this.eintrag.covers || (this.eintrag.cover ? [this.eintrag.cover] : []))]
       return coverUrl(this.$store, liste[this.coverIndex]) || null
     },
     marke() {
