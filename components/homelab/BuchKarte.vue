@@ -1,7 +1,7 @@
 <template>
   <div class="flex-none w-28 flex flex-col">
     <div class="relative w-28 h-40 rounded-md overflow-hidden bg-secondary shadow-md" @click="$emit('oeffnen', eintrag)">
-      <img v-if="eintrag.cover && !ohneCover" :src="eintrag.cover" class="w-full h-full object-cover" loading="lazy" @error="ohneCover = true" />
+      <img v-if="coverUrl" :src="coverUrl" class="w-full h-full object-cover" loading="lazy" @error="coverIndex++" />
       <div v-else class="w-full h-full flex flex-col items-center justify-center p-2 text-center text-xs text-fg-muted gap-1">
         <span class="material-symbols text-2xl">menu_book</span>{{ eintrag.titel }}
       </div>
@@ -20,9 +20,13 @@
 export default {
   props: { eintrag: { type: Object, required: true } },
   data() {
-    return { ohneCover: false } // Katalog-Cover (Open Library über die ISBN) gibt es nicht für jedes Buch
+    return { coverIndex: 0 } // Cover aus mehreren Quellen (DNB, Open Library); fehlt eines, das nächste
   },
   computed: {
+    coverUrl() {
+      const liste = this.eintrag.covers || (this.eintrag.cover ? [this.eintrag.cover] : [])
+      return liste[this.coverIndex] || null
+    },
     marke() {
       if (this.eintrag.status === 'vorhanden') return this.eintrag.formate?.length ? this.eintrag.formate.join(' · ') : 'Schon da'
       if (this.eintrag.status === 'angefragt') return 'Gewünscht'
