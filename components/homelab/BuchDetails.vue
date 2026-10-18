@@ -71,7 +71,7 @@ export default {
     async wuenschen(art) {
       this.laeuft = art
       try {
-        const r = await buecherApi(this, 'POST', '/buecher/wunsch', { provider: this.eintrag.provider, book_id: this.eintrag.book_id, content_type: art, titel: this.eintrag.titel, sprache: sprache() })
+        const r = await buecherApi(this, 'POST', '/buecher/wunsch', { provider: this.eintrag.provider, book_id: this.eintrag.book_id, content_type: art, titel: this.eintrag.titel, autor: this.eintrag.autor, sprache: sprache() })
         this.gewuenschtLokal.push(art)
         this.$emit('gewuenscht', this.eintrag, art)
         this.$toast.success(r.meldung || 'Gewünscht')
