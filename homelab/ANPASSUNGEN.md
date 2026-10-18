@@ -30,4 +30,4 @@ neuen Tag in `homelabbooks` mergen, Konflikte nur in den Dateien unten).
 - `pages/bookshelf/entdecken.vue`: Tab «Entdecken» mit Umschalter «Für dich | Stöbern», Suchfeld, Reihen als Kartenbänder
 - `components/homelab/BuchStoebern.vue`: Stöbern nach Kategorien (Ober-/Unterkategorien, Zeitraum, Reihen Beliebt/Neuheiten/Für dich, «Mehr»)
 - `components/homelab/BuchKarte.vue`, `BuchDetails.vue`: Karte und Detailfenster mit «Hörbuch wünschen» und «E-Book wünschen»
-- `homelab/buecher-api.js`: Aufrufe an `http://<Server>:30370/buecher/…` (Musikwunsch-Dienst, Modul `buchwunsch.py` im Repo homelab-migration) über `$nativeHttp`, Kopfzeile `X-ABS-Token`
+- `homelab/buecher-api.js`: Aufrufe an `http://<Server>:30370/buecher/…` (Medienwunsch-Dienst, Modul `buchwunsch.py` im Repo homelab-migration) über `$nativeHttp`, Kopfzeile `X-ABS-Token`

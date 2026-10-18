@@ -33,7 +33,7 @@
 </template>
 
 <script>
-// HomeLabBooks: Tab «Entdecken» (Reihen und Suche aus /buecher/… des Musikwunsch-Dienstes)
+// HomeLabBooks: Tab «Entdecken» (Reihen und Suche aus /buecher/… des Medienwunsch-Dienstes)
 import { buecherApi, sprache, spracheSetzen } from '~/homelab/buecher-api'
 
 function gemerkterModus() {

@@ -1,4 +1,4 @@
-// HomeLabBooks: Zugriff auf die Schnittstelle /buecher/… des Musikwunsch-Dienstes (Port 30370 auf demselben
+// HomeLabBooks: Zugriff auf die Schnittstelle /buecher/… des Medienwunsch-Dienstes (Port 30370 auf demselben
 // Rechner wie Audiobookshelf). Läuft über $nativeHttp (CapacitorHttp, also ohne CORS) und weist sich mit dem
 // Audiobookshelf-Token der Person aus.
 export function buecherBasis(store) {
