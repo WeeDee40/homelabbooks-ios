@@ -2,8 +2,13 @@
   <div class="flex-none w-28 flex flex-col">
     <div class="relative w-28 h-40 rounded-md overflow-hidden bg-secondary shadow-md" @click="$emit('oeffnen', eintrag)">
       <img v-if="coverUrl" :src="coverUrl" class="w-full h-full object-cover" loading="lazy" @error="coverIndex++" />
-      <div v-else class="w-full h-full flex flex-col items-center justify-center p-2 text-center text-xs text-fg-muted gap-1">
-        <span class="material-symbols text-2xl">menu_book</span>{{ eintrag.titel }}
+      <!-- ohne Cover: schlichter «Buchumschlag» mit Haupttitel und Autor statt des langen Katalogtitels -->
+      <div v-else class="w-full h-full flex flex-col justify-between p-2.5 text-left bg-gradient-to-br from-slate-600 to-slate-800">
+        <span class="material-symbols text-lg text-white/60">menu_book</span>
+        <div>
+          <p class="text-[13px] font-semibold leading-tight text-white line-clamp-4">{{ haupttitel }}</p>
+          <p class="text-[10px] text-white/70 mt-1 truncate">{{ eintrag.autor }}</p>
+        </div>
       </div>
       <span v-if="marke" class="absolute top-1 left-1 text-[10px] px-1.5 py-0.5 rounded-full text-white" :class="eintrag.status === 'vorhanden' ? 'bg-success' : 'bg-warning'">{{ marke }}</span>
       <button v-if="eintrag.status !== 'vorhanden'" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center" @click.stop="$emit('ablehnen', eintrag)">
@@ -23,6 +28,9 @@ export default {
     return { coverIndex: 0 } // Cover aus mehreren Quellen (DNB, Open Library); fehlt eines, das nächste
   },
   computed: {
+    haupttitel() {
+      return (this.eintrag.titel || '').split(/\s*[:–—]\s|\s-\s/)[0]
+    },
     coverUrl() {
       const liste = this.eintrag.covers || (this.eintrag.cover ? [this.eintrag.cover] : [])
       return liste[this.coverIndex] || null

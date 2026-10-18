@@ -15,7 +15,7 @@ export default {
   },
   computed: {
     hideToolbar() {
-      return this.isHome || this.isLatest || this.isPodcastSearch
+      return this.isHome || this.isLatest || this.isPodcastSearch || this.$route.name === 'bookshelf-entdecken' // HomeLabBooks: kein Zähler auf «Entdecken»
     },
     isHome() {
       return this.$route.name === 'bookshelf'

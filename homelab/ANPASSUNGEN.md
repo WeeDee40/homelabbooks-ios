@@ -16,6 +16,7 @@ neuen Tag in `homelabbooks` mergen, Konflikte nur in den Dateien unten).
 | `ios/App/App/Assets.xcassets/Splash.imageset/*.png` | Startbild dunkel mit Symbol (aus `homelab/startbild_zeichnen.swift`) |
 | `static/Logo.png` | Logo der Anmeldeseite (Symbol mit runden Ecken) |
 | `components/home/BookshelfNavBar.vue` | Eintrag «Entdecken» (Material-Symbol `explore`) nach «Home», nur bei Buch-Bibliotheken (markiert mit «HomeLabBooks») |
+| `pages/bookshelf.vue` | Zähler-Leiste auf «Entdecken» ausgeblendet (`hideToolbar`, markiert mit «HomeLabBooks») |
 | `components/connection/ServerConnectForm.vue` | Server-Adresse vorbelegt aus `homelab/einstellungen.js` (3 Zeilen, markiert mit «HomeLabBooks») |
 
 ## Bauen
