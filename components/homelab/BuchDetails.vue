@@ -3,7 +3,7 @@
     <div v-if="eintrag" class="w-full h-full overflow-y-auto pt-24 pb-10 px-2" @click.self="zeigen = false">
       <div class="bg-bg rounded-lg p-4 shadow-lg">
         <div class="flex gap-4">
-          <img v-if="eintrag.cover" :src="eintrag.cover" class="w-24 h-36 object-cover rounded-md flex-none shadow" />
+          <img v-if="eintrag.cover" :src="eintrag.cover" class="w-24 h-36 object-cover rounded-md flex-none shadow" @error="$event.target.style.display = 'none'" />
           <div class="min-w-0">
             <p class="text-lg font-semibold leading-tight">{{ eintrag.titel }}</p>
             <p class="text-sm text-fg-muted mt-1">{{ eintrag.autor }}</p>
