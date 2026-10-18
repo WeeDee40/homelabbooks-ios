@@ -38,7 +38,7 @@
 
 <script>
 // HomeLabBooks: Detailfenster im Tab «Entdecken» (Beschreibung, Wünschen als Hörbuch oder E-Book)
-import { buecherApi, sprache } from '~/homelab/buecher-api'
+import { buecherApi, sprache, coverUrl } from '~/homelab/buecher-api'
 
 export default {
   props: { value: Boolean, eintrag: Object },
@@ -60,7 +60,7 @@ export default {
       return [...(e.covers || (e.cover ? [e.cover] : [])), this.details?.cover].filter(Boolean)
     },
     coverUrl() {
-      return this.coverListe[this.coverIndex] || null
+      return coverUrl(this.$store, this.coverListe[this.coverIndex]) || null
     },
     beschreibung() {
       return this.details?.beschreibung || this.eintrag?.beschreibung || ''

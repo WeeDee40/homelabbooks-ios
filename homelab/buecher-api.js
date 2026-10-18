@@ -31,3 +31,8 @@ export function spracheSetzen(wert) {
     localStorage.setItem('hlb-sprache', wert === 'alle' ? 'alle' : 'de')
   } catch (e) {}
 }
+
+// Cover über den Dienst (/buecher/cover/<isbn>) brauchen dessen Adresse; fremde Cover (https://…) bleiben
+export function coverUrl(store, url) {
+  return url && url.startsWith('/') ? buecherBasis(store) + url : url
+}

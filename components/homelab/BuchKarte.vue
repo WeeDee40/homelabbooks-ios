@@ -22,6 +22,8 @@
 
 <script>
 // HomeLabBooks: Karte im Tab «Entdecken»
+import { coverUrl } from '~/homelab/buecher-api'
+
 export default {
   props: { eintrag: { type: Object, required: true } },
   data() {
@@ -33,7 +35,7 @@ export default {
     },
     coverUrl() {
       const liste = this.eintrag.covers || (this.eintrag.cover ? [this.eintrag.cover] : [])
-      return liste[this.coverIndex] || null
+      return coverUrl(this.$store, liste[this.coverIndex]) || null
     },
     marke() {
       if (this.eintrag.status === 'vorhanden') return this.eintrag.formate?.length ? this.eintrag.formate.join(' · ') : 'Schon da'
