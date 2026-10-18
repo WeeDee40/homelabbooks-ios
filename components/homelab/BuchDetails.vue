@@ -14,15 +14,14 @@
         </div>
         <p v-if="eintrag.beschreibung" class="text-sm mt-4 whitespace-pre-line text-fg/90">{{ eintrag.beschreibung }}</p>
         <div class="mt-5 flex flex-col gap-2">
-          <template v-if="eintrag.status === 'vorhanden'">
-            <ui-btn color="success" @click="zuAudiobookshelf">Ansehen ({{ (eintrag.formate || []).join(' · ') || 'in der Bibliothek' }})</ui-btn>
-          </template>
-          <template v-else-if="gewuenscht || eintrag.status === 'angefragt'">
-            <p class="text-sm text-center text-fg-muted py-2">Ist gewünscht. Sobald es freigegeben und geladen ist, steht es in der Bibliothek.</p>
-          </template>
-          <template v-else>
-            <ui-btn color="success" :loading="laeuft === 'audiobook'" :disabled="!!laeuft" @click="wuenschen('audiobook')">Hörbuch wünschen</ui-btn>
-            <ui-btn color="primary" :loading="laeuft === 'ebook'" :disabled="!!laeuft" @click="wuenschen('ebook')">E-Book wünschen</ui-btn>
+          <ui-btn v-if="eintrag.abs_id" color="success" @click="zuAudiobookshelf">In der Bibliothek ansehen</ui-btn>
+          <!-- pro Format: schon da, lädt gerade oder wünschen (so lässt sich das andere Format nachträglich wünschen) -->
+          <template v-for="f in formate">
+            <p v-if="f.stand" :key="f.art" class="text-sm text-fg-muted flex items-center justify-center gap-1 py-2">
+              <span class="material-symbols text-base">{{ f.stand === 'da' ? 'check_circle' : 'downloading' }}</span>
+              {{ f.text }} {{ f.stand === 'da' ? 'ist in der Bibliothek' : 'wird geladen' }}
+            </p>
+            <ui-btn v-else :key="f.art" :color="f.art === 'audiobook' ? 'success' : 'primary'" :loading="laeuft === f.art" :disabled="!!laeuft" @click="wuenschen(f.art)">{{ f.text }} wünschen</ui-btn>
           </template>
         </div>
       </div>
@@ -37,14 +36,24 @@ import { buecherApi, sprache } from '~/homelab/buecher-api'
 export default {
   props: { value: Boolean, eintrag: Object },
   data() {
-    return { laeuft: null, gewuenscht: false }
+    return { laeuft: null, gewuenschtLokal: [] }
   },
   watch: {
     eintrag() {
-      this.gewuenscht = false
+      this.gewuenschtLokal = []
     }
   },
   computed: {
+    formate() {
+      const e = this.eintrag || {}
+      return [
+        { art: 'audiobook', text: 'Hörbuch', name: 'Hörbuch' },
+        { art: 'ebook', text: 'E-Book', name: 'E-Book' }
+      ].map((f) => ({
+        ...f,
+        stand: (e.formate || []).includes(f.name) ? 'da' : (e.gewuenscht || []).includes(f.art) || this.gewuenschtLokal.includes(f.art) ? 'laedt' : null
+      }))
+    },
     zeigen: {
       get() {
         return this.value
@@ -63,8 +72,8 @@ export default {
       this.laeuft = art
       try {
         const r = await buecherApi(this, 'POST', '/buecher/wunsch', { provider: this.eintrag.provider, book_id: this.eintrag.book_id, content_type: art, titel: this.eintrag.titel, sprache: sprache() })
-        this.gewuenscht = true
-        this.$emit('gewuenscht', this.eintrag)
+        this.gewuenschtLokal.push(art)
+        this.$emit('gewuenscht', this.eintrag, art)
         this.$toast.success(r.meldung || 'Gewünscht')
       } catch (e) {
         this.$toast.error(`Wunsch fehlgeschlagen: ${e.message}`)

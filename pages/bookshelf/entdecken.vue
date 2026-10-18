@@ -77,8 +77,13 @@ export default {
       this.auswahl = e
       this.zeigeDetails = true
     },
-    markieren(e) {
-      for (const r of this.reihen) for (const x of r.eintraege) if (x.provider === e.provider && x.book_id === e.book_id) x.status = 'angefragt'
+    markieren(e, art) {
+      for (const r of this.reihen)
+        for (const x of r.eintraege)
+          if (x.provider === e.provider && x.book_id === e.book_id) {
+            if (x.status !== 'vorhanden') x.status = 'angefragt'
+            x.gewuenscht = [...new Set([...(x.gewuenscht || []), art])]
+          }
     },
     async ablehnen(e) {
       try {
