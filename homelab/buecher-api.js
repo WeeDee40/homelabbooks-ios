@@ -1,10 +1,12 @@
-// HomeLabBooks: Zugriff auf die Schnittstelle /buecher/… des Medienwunsch-Dienstes (Port 30370 auf demselben
-// Rechner wie Audiobookshelf). Läuft über $nativeHttp (CapacitorHttp, also ohne CORS) und weist sich mit dem
-// Audiobookshelf-Token der Person aus.
+// HomeLabBooks: Zugriff auf die Schnittstelle /buecher/… des Medienwunsch-Dienstes (auf demselben Rechner wie
+// Audiobookshelf). Läuft über $nativeHttp (CapacitorHttp, also ohne CORS) und weist sich mit dem
+// Audiobookshelf-Token der Person aus. Server ohne Port (https://buecher.bi-gerbers.ch): gleiche Adresse, der
+// Proxy (Caddy) leitet /buecher/… an Medienwunsch weiter. Server mit Port (alte Adresse …:30383): Port 30370.
 export function buecherBasis(store) {
   const adresse = store.state.user.serverConnectionConfig?.address || ''
   try {
     const u = new URL(adresse)
+    if (!u.port) return `${u.protocol}//${u.hostname}`
     return `${u.protocol}//${u.hostname}:30370`
   } catch (e) {
     return ''
