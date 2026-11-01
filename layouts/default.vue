@@ -11,6 +11,7 @@
     <modals-rssfeeds-rss-feed-modal />
     <app-side-drawer :key="currentLang" />
     <readers-reader />
+    <homelab-neuigkeiten ref="neuigkeiten" />
   </div>
 </template>
 
@@ -363,6 +364,8 @@ export default {
 
       const deviceData = await this.$db.getDeviceData()
       this.$store.commit('setDeviceData', deviceData)
+      // HomeLabBooks: vor der ersten Anmeldung ist noch kein Server gespeichert
+      this.$refs.neuigkeiten.pruefen(!!deviceData?.serverConnectionConfigs?.length)
 
       this.$setOrientationLock(this.$store.getters['getOrientationLockSetting'])
 

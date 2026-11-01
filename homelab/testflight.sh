@@ -36,4 +36,9 @@ if ! xcodebuild -exportArchive -archivePath .build-dd/HomeLabBooks.xcarchive \
   exit 1
 fi
 fertig=1
+# Neuesten Eintrag aus static/neuigkeiten.md (auch in der App zu sehen) als TestFlight-Text setzen
+if [ ${#AUTH[@]} -gt 0 ]; then
+  ASC_KEY_ID="$ASC_KEY_ID" ASC_ISSUER_ID="$ASC_ISSUER_ID" ASC_KEY_PATH="$ASC_KEY_PATH" python3 homelab/neuigkeiten_testflight.py \
+    static/neuigkeiten.md ch.gerber.homelabbooks "$neu" IOS || echo "WARNUNG: TestFlight-Text nicht gesetzt, der Build ist aber hochgeladen."
+fi
 git commit -q -m "TestFlight: Build $neu" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" "$P" && echo "Build $neu hochgeladen und committet"

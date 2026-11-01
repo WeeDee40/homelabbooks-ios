@@ -175,6 +175,11 @@
       </div>
     </template>
 
+    <!-- HomeLabBooks -->
+    <div class="py-3 flex items-center">
+      <ui-btn small @click="$eventBus.$emit('neuigkeiten-zeigen')">Neuigkeiten</ui-btn>
+    </div>
+
     <div v-show="loading" class="w-full h-full absolute top-0 left-0 flex items-center justify-center z-10">
       <ui-loading-indicator />
     </div>
